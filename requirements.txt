@@ -1,0 +1,10 @@
+certifi==2023.7.22
+charset-normalizer==3.2.0
+idna==3.4
+mediafire==0.6.1
+numpy==1.26.0
+opencv-contrib-python==4.8.0.76
+requests==2.31.0
+requests-toolbelt==1.0.0
+six==1.16.0
+urllib3==2.0.5
