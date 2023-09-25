@@ -45,7 +45,7 @@ def main() -> None:
 
     # Setup Mediapipe pose instance
     with MEDIAPIPE_POSE_MODEL.Pose(
-        min_detection_confidence=0.5, min_tracking_confidence=0.5
+        min_detection_confidence=0.9, min_tracking_confidence=0.9
     ) as pose:
         # Video capture and display loop
         while CAPTURE.isOpened():
@@ -80,7 +80,7 @@ def main() -> None:
                 # Press 'q' to exit the loop and close the visual window
                 if cv2.waitKey(10) & 0xFF == ord("q"):
                     break
-
+                raise ValueError()
             except Exception as e:
                 # Log any exceptions that occur during processing
                 error(e)
