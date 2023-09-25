@@ -1,3 +1,5 @@
 .venv
 .vscode
 opencv_license.txt
+__pycache__
+tt.py

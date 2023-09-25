@@ -15,7 +15,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
+import math
+from tt import isPosture_good
 import cv2
 import mediapipe as mp
 from typing import Final
@@ -69,6 +70,47 @@ def main() -> None:
                 image.flags.writeable = True
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+                if results.pose_landmarks:
+                    left_shoulder = results.pose_landmarks.landmark[
+                        MEDIAPIPE_POSE_MODEL.PoseLandmark.LEFT_SHOULDER
+                    ]
+                    right_shoulder = results.pose_landmarks.landmark[
+                        MEDIAPIPE_POSE_MODEL.PoseLandmark.RIGHT_SHOULDER
+                    ]
+
+                    posture_status, angle = isPosture_good(
+                        right_shoulder_x=right_shoulder.x,
+                        right_shoulder_y=right_shoulder.y,
+                        left_shoulder_x=left_shoulder.x,
+                        left_shoulder_y=left_shoulder.y,
+                    )
+
+                    # if abs(angle) > hunched_threshold:
+                    if posture_status == True:
+                        cv2.putText(
+                            image,
+                            f"Hunched Shoulders {math.floor(angle)=}",
+                            (10, 30),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            1,
+                            (0, 0, 255),
+                            2,
+                        )
+
+                    else:
+                        cv2.putText(
+                            image,
+                            f"Good posture {math.floor(angle)=}",
+                            (10, 30),
+                            cv2.FONT_HERSHEY_COMPLEX,
+                            1,
+                            (0, 255, 0),
+                            2,
+                        )
+
+                else:
+                    error("No human figure detected")
+
                 # Draw landmarks on the frame
                 MEDIAPIPE_RENDERER.draw_landmarks(
                     image, results.pose_landmarks, MEDIAPIPE_POSE_MODEL.POSE_CONNECTIONS
@@ -80,7 +122,7 @@ def main() -> None:
                 # Press 'q' to exit the loop and close the visual window
                 if cv2.waitKey(10) & 0xFF == ord("q"):
                     break
-                raise ValueError()
+
             except Exception as e:
                 # Log any exceptions that occur during processing
                 error(e)
