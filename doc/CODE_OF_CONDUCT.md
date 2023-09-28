@@ -34,11 +34,6 @@ If you witness or experience behavior that violates this Code of Conduct, please
 
 Community members who violate this Code of Conduct may face temporary or permanent exclusion from the community. We will address all reports promptly and fairly.
 
-## Enforcement
-
-The project maintainers are responsible for enforcing this Code of Conduct. They have the right and responsibility to remove, edit, or reject comments, commits, code, issues, and other contributions that violate this Code of Conduct.
-
-![Enforcement](https://example.com/enforcement.png)
 
 ## Credits
 
