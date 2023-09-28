@@ -19,7 +19,7 @@ import math
 from tt import isPosture_good
 import cv2
 import mediapipe as mp
-from typing import Final
+from typing import Final, Any
 from logging import basicConfig, error, ERROR
 
 # Configure logging to show only errors
@@ -32,11 +32,11 @@ def main() -> None:
     """
 
     # Initialization for mediapipe pose model and drawing_utils for visuals
-    MEDIAPIPE_RENDERER: Final[object] = mp.solutions.drawing_utils
-    MEDIAPIPE_POSE_MODEL: Final[object] = mp.solutions.pose
+    MEDIAPIPE_RENDERER: mp.solutions.drawing_utils = mp.solutions.drawing_utils
+    MEDIAPIPE_POSE_MODEL: mp.solutions.pose = mp.solutions.pose
 
     # Create a capture object to access the camera
-    CAPTURE: Final[object] = cv2.VideoCapture(
+    CAPTURE: cv2.VideoCapture= cv2.VideoCapture(
         0, cv2.CAP_DSHOW
     )  # Change the camera index if needed, and use CAP_DSHOW for Windows
 
@@ -52,10 +52,12 @@ def main() -> None:
         while CAPTURE.isOpened():
             try:
                 # Read a frame from the camera
+                _: bool
+                frame: cv2.typing.MatLike
                 _, frame = CAPTURE.read()
 
                 # Resize the frame
-                frame = cv2.resize(frame, (final_width, final_height))
+                frame: cv2.typing.MatLike= cv2.resize(frame, (final_width, final_height))
 
                 # Pose detection and visuals
 
@@ -89,7 +91,7 @@ def main() -> None:
                     if posture_status == True:
                         cv2.putText(
                             image,
-                            f"Hunched Shoulders {math.floor(angle)=}",
+                            f"Hunched Shoulders {math.floor(angle)}",
                             (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1,
@@ -100,7 +102,7 @@ def main() -> None:
                     else:
                         cv2.putText(
                             image,
-                            f"Good posture {math.floor(angle)=}",
+                            f"Good posture {math.floor(angle)}",
                             (10, 30),
                             cv2.FONT_HERSHEY_COMPLEX,
                             1,
