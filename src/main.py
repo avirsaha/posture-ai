@@ -15,124 +15,338 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+"""
+This is the main script of the project. Execute this for running the program.
+"""
+
+# Metadata
+__title__: str = "sitfix-ai"
+__description__: str = """A Python project for demonstrating the use of computer vision 
+                          in maintaning healthy posuture while working on a computer."""
+__version__: str = "0.1.0-alpha"
+__authors__: tuple[str, ...] = ("Aviraj Saha",)
+__authors_email__: tuple[str, ...] = ("your@email.com",)
+__license__: str = "MIT License"
+__url__: str = "https://github.com/avirsaha/sitfix-ai"
+__dependencies__: tuple[str, ...] = (
+    "absl-py==2.0.0"
+    "attrs==23.1.0"
+    "cffi==1.15.1"
+    "contourpy==1.1.1"
+    "cycler==0.11.0"
+    "flatbuffers==23.5.26"
+    "fonttools==4.42.1"
+    "kiwisolver==1.4.5"
+    "matplotlib==3.8.0"
+    "mediapipe==0.10.5"
+    "numpy==1.26.0"
+    "opencv-contrib-python==4.8.0.76"
+    "packaging==23.1"
+    "Pillow==10.0.1"
+    "protobuf==3.20.3"
+    "pycparser==2.21"
+    "pyparsing==3.1.1"
+    "python-dateutil==2.8.2"
+    "six==1.16.0"
+    "sounddevice==0.4.6"
+)
+__keywords__: tuple[str, ...] = tuple()
+
+__metadata__: tuple[str | tuple, ...] = (
+    __title__,
+    __description__,
+    __version__,
+    __authors__,
+    __authors_email__,
+    __license__,
+    __url__,
+    __dependencies__,
+    __keywords__,
+)
+
+# Importing dependencies
 import math
-from tt import isPosture_good
 import cv2
 import mediapipe as mp
-from typing import Final, Any
+from typing import Final
 from logging import basicConfig, error, ERROR
+import judge
 
 # Configure logging to show only errors
 basicConfig(level=ERROR)
 
 
-def main() -> None:
+def initialize_pose_model() -> mp.solutions.pose.Pose | None:
     """
-    This function initializes the pose model, captures video, and processes it to detect and visualize human poses.
+    Initialize and configure the MediaPipe pose model.
+
+    Returns:
+        mp.solutions.pose.Pose: Initialized pose model.
+
+    Author: Aviraj Saha
+    Date: September 30, 2023
+    Purpose: Initialize the pose detection model for detecting human poses.
+    Time Complexity: O(1)
+    Space Complexity: O(1)
+    """
+    try:
+        # Define the MediaPipe pose model
+        MEDIAPIPE_POSE_MODEL: Final[mp.solutions.pose] = mp.solutions.pose
+        # Initialize the pose model with confidence thresholds
+        pose: Final[mp.solutions.pose.Pose] = MEDIAPIPE_POSE_MODEL.Pose(
+            min_detection_confidence=0.9, min_tracking_confidence=0.9
+        )
+        return pose
+    except Exception as e:
+        error(f"Error initializing pose model: {e}")
+        return None
+
+
+def capture_video(camera_index: int) -> cv2.VideoCapture | None:
+    """
+    Capture video from the camera.
+
+    Args:
+        camera_index (int): Index of the camera to capture video from.
+
+    Returns:
+        cv2.VideoCapture: Video capture object.
+
+    Author: Aviraj Saha
+    Date: September 28, 2023
+    Purpose: Initialize video capture from the specified camera.
+    Time Complexity: O(1)
+    Space Complexity: O(1)
+    """
+    try:
+        # Create a video capture object for the specified camera
+        CAPTURE: Final[cv2.VideoCapture] = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+        return CAPTURE
+    except Exception as e:
+        error(f"Error capturing video: {e}")
+        return None
+
+
+def process_frame(
+    frame: cv2.typing.MatLike, pose: mp.solutions.pose.Pose
+) -> tuple[cv2.typing.MatLike, object] | tuple[None, None]:
+    """
+    Process a video frame, detect and visualize human poses.
+
+    Args:
+        frame (object): Video frame to process.
+        pose (mp.solutions.pose.Pose): Initialized pose model.
+
+    Returns:
+        Tuple[object, object]: Processed image and pose detection results.
+
+    Author: Aviraj Saha
+    Date: September 28, 2023
+    Purpose: Process a video frame for pose detection.
+    Time Complexity: Depends on the image size and pose detection model.
+    Space Complexity: Depends on the image size and pose detection model.
+    """
+    try:
+        final_width: int = 1280  # Alterable
+        final_height: int = 960  # Alterable
+
+        # Resize the frame to a specific width and height
+        frame: cv2.typing.MatLike = cv2.resize(frame, (final_width, final_height))
+        # Convert frame colors from BGR to RGB
+        image: cv2.typing.MatLike = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        image.flags.writeable = False
+
+        # Process the frame using the pose model
+        results: object = pose.process(image)
+
+        # Convert image colors back from RGB to BGR
+        image.flags.writeable = True
+        image: cv2.typing.MatLike = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+        return image, results
+    except Exception as e:
+        error(f"Error processing frame: {e}")
+        return None, None
+
+
+def display_posture_status(
+    image: cv2.typing.MatLike, posture_status: bool, *cases: list[tuple[float, bool]]
+) -> None:
+    """
+    Display posture status on the image.
+
+    Args:
+        image (object): Image to display on.
+        posture_status (bool): Whether the posture is good or not.
+        angle (float): Angle related to the posture.
+
+    Author: Aviraj Saha
+    Date: September 30, 2023
+    Purpose: Display posture status on the processed image.
+    Time Complexity: O(1)
+    Space Complexity: O(1)
     """
 
-    # Initialization for mediapipe pose model and drawing_utils for visuals
-    MEDIAPIPE_RENDERER: mp.solutions.drawing_utils = mp.solutions.drawing_utils
-    MEDIAPIPE_POSE_MODEL: mp.solutions.pose = mp.solutions.pose
+    try:
+        # Display posture status as text on the image
+        if not posture_status:
+            cv2.putText(
+                image,
+                "Poor Posture",
+                (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 0, 255),
+                2,
+            )
 
-    # Create a capture object to access the camera
-    CAPTURE: cv2.VideoCapture= cv2.VideoCapture(
-        0, cv2.CAP_DSHOW
-    )  # Change the camera index if needed, and use CAP_DSHOW for Windows
+        else:
+            cv2.putText(
+                image,
+                "Good posture",
+                (10, 30),
+                cv2.FONT_HERSHEY_COMPLEX,
+                1,
+                (0, 255, 0),
+                2,
+            )
+        inc: int = 0
+        for item in cases:
+            inc += 30
+            colors: tuple[int] = (0, 255, 0)
+            if not item[1]:
+                colors = (0, 0, 255)
+            cv2.putText(
+                image,
+                f"{math.floor(item[0])}",
+                (1200, 50 + inc),
+                cv2.FONT_HERSHEY_COMPLEX,
+                1,
+                colors,
+                2,
+            )
 
-    # Custom image size
-    final_width: int = 1280  # Width of the final frame
-    final_height: int = 960  # Height of the final frame
+    except Exception as e:
+        error(f"Error displaying posture status: {e}")
 
-    # Setup Mediapipe pose instance
-    with MEDIAPIPE_POSE_MODEL.Pose(
-        min_detection_confidence=0.9, min_tracking_confidence=0.9
-    ) as pose:
-        # Video capture and display loop
+
+def process_video(pose: mp.solutions.pose.Pose, camera_index: int) -> None:
+    """
+    Process video frames, detect posture, and visualize it.
+
+    Args:
+        pose (mp.solutions.pose.Pose): Initialized pose model.
+        camera_index (int): Index of the camera to capture video from.
+
+    Author: Aviraj Saha
+    Date: September 30, 2023
+    Purpose: Continuously process video frames for posture detection and visualization.
+    Time Complexity: Depends on the frame rate and image size.
+    Space Complexity: Depends on the frame rate and image size.
+    """
+    try:
+        # Create a video capture object
+        CAPTURE: Final[cv2.VideoCapture] = capture_video(camera_index)
+
         while CAPTURE.isOpened():
             try:
-                # Read a frame from the camera
                 _: bool
                 frame: cv2.typing.MatLike
                 _, frame = CAPTURE.read()
 
-                # Resize the frame
-                frame: cv2.typing.MatLike= cv2.resize(frame, (final_width, final_height))
-
-                # Pose detection and visuals
-
-                # Recolor from BGR to RGB
-                image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                image.flags.writeable = False
-
-                # Saving results from pose model
-                results = pose.process(image)
-
-                # Recolor from RGB to BGR
-                image.flags.writeable = True
-                image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-                if results.pose_landmarks:
-                    left_shoulder = results.pose_landmarks.landmark[
-                        MEDIAPIPE_POSE_MODEL.PoseLandmark.LEFT_SHOULDER
-                    ]
-                    right_shoulder = results.pose_landmarks.landmark[
-                        MEDIAPIPE_POSE_MODEL.PoseLandmark.RIGHT_SHOULDER
-                    ]
-
-                    posture_status, angle = isPosture_good(
-                        right_shoulder_x=right_shoulder.x,
-                        right_shoulder_y=right_shoulder.y,
-                        left_shoulder_x=left_shoulder.x,
-                        left_shoulder_y=left_shoulder.y,
-                    )
-
-                    # if abs(angle) > hunched_threshold:
-                    if posture_status == True:
-                        cv2.putText(
-                            image,
-                            f"Hunched Shoulders {math.floor(angle)}",
-                            (10, 30),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            1,
-                            (0, 0, 255),
-                            2,
+                # Process the video frame and get results
+                image: cv2.typing.MatLike
+                results: object
+                image, results = process_frame(frame, pose)
+                if results:
+                    if results.pose_landmarks:
+                        left_shoulder: object = results.pose_landmarks.landmark[
+                            mp.solutions.pose.PoseLandmark.LEFT_SHOULDER
+                        ]
+                        right_shoulder: object = results.pose_landmarks.landmark[
+                            mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER
+                        ]
+                        right_hip: object = results.pose_landmarks.landmark[
+                            mp.solutions.pose.PoseLandmark.RIGHT_HIP
+                        ]
+                        left_hip: object = results.pose_landmarks.landmark[
+                            mp.solutions.pose.PoseLandmark.LEFT_HIP
+                        ]
+                        nose: object = results.pose_landmarks.landmark[
+                            mp.solutions.pose.PoseLandmark.NOSE
+                        ]
+                        posture_status: bool
+                        (
+                            posture_status,
+                            shoulder_distance,
+                            shoulder_tilt,
+                            shoulder_to_nose_distance,
+                        ) = judge.isPosture_good(
+                            left_shoulder=(left_shoulder.x, left_shoulder.y),
+                            right_shoulder=(
+                                right_shoulder.x,
+                                right_shoulder.y,
+                            ),
+                            nose=(nose.x, nose.y),
                         )
-
-                    else:
-                        cv2.putText(
+                        # Display the posture status on the image
+                        display_posture_status(
                             image,
-                            f"Good posture {math.floor(angle)}",
-                            (10, 30),
-                            cv2.FONT_HERSHEY_COMPLEX,
-                            1,
-                            (0, 255, 0),
-                            2,
+                            posture_status,
+                            shoulder_distance,
+                            shoulder_tilt,
+                            shoulder_to_nose_distance,
                         )
 
                 else:
                     error("No human figure detected")
 
                 # Draw landmarks on the frame
-                MEDIAPIPE_RENDERER.draw_landmarks(
-                    image, results.pose_landmarks, MEDIAPIPE_POSE_MODEL.POSE_CONNECTIONS
+                mp.solutions.drawing_utils.draw_landmarks(
+                    image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS
                 )
 
                 # Show the final frame
                 cv2.imshow("sitfix-ai Visual Output", image)
 
-                # Press 'q' to exit the loop and close the visual window
                 if cv2.waitKey(10) & 0xFF == ord("q"):
                     break
 
             except Exception as e:
-                # Log any exceptions that occur during processing
-                error(e)
+                error(f"Error in video processing loop: {e}")
 
-        # Release the camera and close all OpenCV windows
         CAPTURE.release()
         cv2.destroyAllWindows()
 
+    except Exception as e:
+        error(f"Error in process_video function: {e}")
+
+
+def main() -> None:
+    """
+    Execution starts from here.
+
+    Args:
+        pose (mp.solutions.pose.Pose): Initialized pose model.
+        camera_index (int): Index of the camera to capture video from.
+
+    Author: Aviraj Saha
+    Date: September 28, 2023
+
+    Purpose: This is the main scope of the function.
+    Time Complexity: Depends on the other functions.
+    Space Complexity: Depends on the other functions.
+    """
+    try:
+        # Initialize the pose model
+        pose: mp.solutions.pose.Pose = initialize_pose_model()
+        if pose is not None:
+            # Process video frames for posture detection
+            process_video(pose, camera_index=0)
+    except Exception as e:
+        error(f"Error in main function: {e}")
+
 
 if __name__ == "__main__":
+    # print(__metadata__)  # Uncomment for printing metadata attached to this code.
     main()
