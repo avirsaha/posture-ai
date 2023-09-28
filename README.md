@@ -1,5 +1,6 @@
-# Project Name Documentation
+# Sitfix-ai Documentation
 
+## Contributers
 Author: [Aviraj Saha](mailto:aviraj.saha@outlook.com)
 
 ## Table of Contents
@@ -27,9 +28,11 @@ Author: [Aviraj Saha](mailto:aviraj.saha@outlook.com)
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
+## Keywords
+pass
 ## How to Contribute
 
-We welcome contributions! Please follow our [contribution guidelines](CONTRIBUTING.md).
+We welcome contributions! Please follow our [contribution guidelines](doc/CONTRIBUTING.md).
 
 ## Working Principle of Functions
 
@@ -85,9 +88,9 @@ Here, we summarize the time and space complexities of each function.
 To set up the environment for running this program, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/avirsaha/sitfix-ai.git`
-2. Install Python (>= 3.7) from [python.org](https://www.python.org/).
+2. Install Python (>= 3.10) from [python.org](https://www.python.org/).
 3. Install dependencies: `pip install -r requirements.txt`
-
+---
 ## Code of Conduct
 
-Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a respectful and inclusive community.
+Please read and follow our [Code of Conduct](doc/CODE_OF_CONDUCT.md) to ensure a respectful and inclusive community.
