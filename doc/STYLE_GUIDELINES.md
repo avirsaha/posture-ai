@@ -1,46 +1,91 @@
-# Contributing to sitfix-ai
 
-Thank you for your interest in contributing to [sitfix-ai](https://github.com/avirsaha/sitfix-ai)! We welcome contributions from the community to help improve and grow this project. By contributing, you are helping to make this project better for everyone. Please take a moment to read through this guide to understand how you can contribute.
+# Project Style Guidelines
 
-## Code of Conduct
+This document outlines the coding style and conventions to be followed in our Python project. These guidelines are designed to ensure code consistency, readability, and maintainability across the project.
 
-Please review our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing. We expect all contributors to abide by these guidelines to ensure a respectful and inclusive environment.
+## 1. PEP 8 Compliance
 
-## How to Contribute
+We adhere to the [PEP 8 style guide](https://www.python.org/dev/peps/pep-0008/) for Python code. Please follow these key PEP 8 principles:
 
-### Reporting Issues
+- Use 4 spaces per indentation level.
+- Limit lines to 79 characters for code and 72 for docstrings and comments.
+- Use clear and descriptive variable and function names.
+- Use whitespace to improve code readability.
 
-If you encounter any issues with the project, please open a [GitHub Issue](https://github.com/avirsaha/sitfix-ai/issues) and provide as much detail as possible, including the steps to reproduce the issue and any relevant error messages.
+```python
+# Good
+def calculate_average(numbers: List[float]) -> float:
+    total = sum(numbers)
+    count = len(numbers)
+    return total / count
 
-### Proposing Enhancements
+# Bad
+def avg(nums: List[float]) -> float:
+    t = sum(nums)
+    c = len(nums)
+    return t / c
+```
 
-If you have an idea for an enhancement or new feature, please open a [GitHub Issue](https://github.com/avirsaha/sitfix-ai/issues) and use the "enhancement" label. Describe your proposed change or feature in detail, including its rationale and potential benefits.
+## 2. Type Annotations
 
-### Making Code Contributions
+We heavily rely on type annotations to enhance code clarity and catch type-related errors early. Ensure that all function parameters and return values are properly annotated. Use type hints from the `typing` module when necessary.
 
-1. Fork the repository to your GitHub account.
-2. Clone the forked repository to your local machine.
-3. Create a new branch for your contribution: `git checkout -b feature/your-feature-name`.
-4. Make your changes and ensure they follow the project's coding style and conventions.
-5. Test your changes thoroughly.
-6. Commit your changes with a clear and concise commit message.
-7. Push your changes to your fork: `git push origin feature/your-feature-name`.
-8. Create a pull request (PR) from your fork to the main project repository.
-9. Provide a detailed description of your changes in the PR.
-10. Participate in the review process, addressing any feedback.
+```python
+from typing import List
 
-### Reviewing Pull Requests
+def process_data(data: List[str]) -> List[str]:
+    """Processes a list of strings and returns a list of processed strings."""
+    result = [process_string(item) for item in data]
+    return result
+```
 
-Project maintainers will review your pull requests. Please be patient during the review process, and be ready to address any feedback or make additional changes as needed.
+## 3. Functional Paradigm
 
-## Code Style and Conventions
+We prefer a functional programming style where feasible. Write pure functions that do not have side effects and avoid mutating data in-place.
 
-Follow the project's code style and conventions as outlined in the project's documentation. Consistent coding practices make it easier to review and merge contributions. Check out our [Style Guidlines](STYLE_GUIDELINES.md) to discover more  about the coding style and convensions used in this project.
+```python
+from typing import List
 
-## License
+def square_all(numbers: List[int]) -> List[int]:
+    """Return a new list containing the squares of all numbers in the input list."""
+    return [x ** 2 for x in numbers]
+```
 
-By contributing to [Project Name], you agree that your contributions will be licensed under the [MIT License](LICENSE.md).
+## 4. Documentation
 
-## Acknowledgments
+Document your code thoroughly. Use clear and concise docstrings to explain the purpose of functions, classes, and modules. Include examples where appropriate.
 
-We appreciate your contributions and the time you've dedicated to improving [sitfix-ai](https://github.com/avirsaha/sitfix-ai). Thank you for helping us make this project better for everyone!
+```python
+def add(a: int, b: int) -> int:
+    """
+    Add two integers.
+
+    Args:
+        a (int): The first integer.
+        b (int): The second integer.
+
+    Returns:
+        int: The sum of `a` and `b`.
+
+    Example:
+        >>> add(2, 3)
+        5
+    """
+    return a + b
+```
+
+## 5. Testing
+
+Write unit tests for your code using a testing framework such as `unittest` or `pytest`. Ensure that your code passes all tests before making a pull request.
+
+## 6. Code Review
+
+During code reviews, pay attention to adherence to these style guidelines. Reviewers should provide feedback on style issues as well as functional correctness.
+
+## 7. Continuous Integration
+
+Integrate automated linting and style checking into our continuous integration (CI) pipeline to catch style violations early.
+
+---
+
+By following these guidelines, we can maintain a clean, readable, and consistent codebase that promotes collaboration and maintainability.

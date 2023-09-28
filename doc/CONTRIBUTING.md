@@ -4,7 +4,11 @@ Thank you for your interest in contributing to [sitfix-ai](https://github.com/av
 
 ## Code of Conduct
 
-Please review our [Code of Conduct](doc/CODE_OF_CONDUCT.md) before contributing. We expect all contributors to abide by these guidelines to ensure a respectful and inclusive environment.
+Please review our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing. We expect all contributors to abide by these guidelines to ensure a respectful and inclusive environment.
+
+## Access Documentation
+
+Checkout our [README](../README.md) for any relevent information regarding the codebase that you may need to make your contribution to this project.
 
 ## How to Contribute
 
@@ -15,6 +19,7 @@ If you encounter any issues with the project, please open a [GitHub Issue](https
 ### Proposing Enhancements
 
 If you have an idea for an enhancement or new feature, please open a [GitHub Issue](https://github.com/avirsaha/sitfix-ai/issues) and use the "enhancement" label. Describe your proposed change or feature in detail, including its rationale and potential benefits.
+
 
 ### Making Code Contributions
 
@@ -35,7 +40,7 @@ Project maintainers will review your pull requests. Please be patient during the
 
 ## Code Style and Conventions
 
-Follow the project's code style and conventions as outlined in the project's documentation. Consistent coding practices make it easier to review and merge contributions. Check out our [Style Guidlines](doc/STYLE_GUIDELINES.md) to discover more  about the coding style and convensions used in this project.
+Follow the project's code style and conventions as outlined in the project's documentation. Consistent coding practices make it easier to review and merge contributions. Check out our [Style Guidlines](STYLE_GUIDELINES.md) to discover more  about the coding style and convensions used in this project.
 
 ## License
 
