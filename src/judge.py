@@ -129,9 +129,9 @@ def isPosture_good(
     shoulder_to_nose_distance = calculate_distance(nose, left_shoulder)
 
     # Definng conditions:
-    condition1 = shoulder_distance > 0.32  # Adjustable threshold
+    condition1 = 0.45 > shoulder_distance > 0.35  # Adjustable threshold
     condition2 = shoulder_tilt >= 178  # Adjustable threshold
-    condition3 = shoulder_to_nose_distance >= 0.0  # Adjustable threshold
+    condition3 = shoulder_to_nose_distance > 0.35  # Adjustable threshold
     # Taking intersection of all conditions
     is_good_posture: bool = condition1 and condition2 and condition3
 
@@ -143,9 +143,9 @@ def isPosture_good(
     """
     return (
         is_good_posture,
-        (shoulder_distance, condition1),
-        (shoulder_tilt, condition2),
-        (shoulder_to_nose_distance, condition3),
+        [shoulder_distance, condition1],
+        [shoulder_tilt, condition2],
+        [shoulder_to_nose_distance, condition3],
     )
 
 

@@ -71,6 +71,7 @@ import mediapipe as mp
 from typing import Final
 from logging import basicConfig, error, ERROR
 import judge
+import winsound
 
 # Configure logging to show only errors
 basicConfig(level=ERROR)
@@ -190,12 +191,13 @@ def display_posture_status(
     try:
         # Display posture status as text on the image
         if not posture_status:
+            winsound.Beep(800, 10)
             cv2.putText(
                 image,
                 "Poor Posture",
-                (10, 30),
+                (80, 80),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                1,
+                3,
                 (0, 0, 255),
                 2,
             )
@@ -204,22 +206,22 @@ def display_posture_status(
             cv2.putText(
                 image,
                 "Good posture",
-                (10, 30),
+                (80, 80),
                 cv2.FONT_HERSHEY_COMPLEX,
-                1,
-                (0, 255, 0),
+                3,
+                (255, 0, 0),
                 2,
             )
         inc: int = 0
         for item in cases:
-            inc += 30
-            colors: tuple[int] = (0, 255, 0)
+            inc += 50
+            colors: tuple[int] = (255, 0, 0)
             if not item[1]:
                 colors = (0, 0, 255)
             cv2.putText(
                 image,
                 f"{math.floor(item[0])}",
-                (1200, 50 + inc),
+                (1200, 80 + inc),
                 cv2.FONT_HERSHEY_COMPLEX,
                 1,
                 colors,
@@ -290,6 +292,15 @@ def process_video(pose: mp.solutions.pose.Pose, camera_index: int) -> None:
                             nose=(nose.x, nose.y),
                         )
                         # Display the posture status on the image
+
+                        # shoulder_distance = str(float(shoulder_distance) * 100)
+                        # shoulder_tilt = str(180 - float(shoulder_tilt))
+                        # shoulder_to_nose_distance = str(
+                        #     float(shoulder_to_nose_distance) * 100
+                        # )
+                        shoulder_distance[0] *= 100
+                        shoulder_to_nose_distance[0] *= 100
+                        shoulder_tilt[0] = 180 - shoulder_tilt[0]
                         display_posture_status(
                             image,
                             posture_status,
@@ -304,6 +315,46 @@ def process_video(pose: mp.solutions.pose.Pose, camera_index: int) -> None:
                 # Draw landmarks on the frame
                 mp.solutions.drawing_utils.draw_landmarks(
                     image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS
+                )
+
+                cv2.putText(
+                    image,
+                    "Stats",
+                    (1100, 50),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    2,
+                    (255, 0, 0),
+                    2,
+                )
+
+                cv2.putText(
+                    image,
+                    "Head:",
+                    (950, 130),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    1,
+                    (255, 0, 0),
+                    2,
+                )
+
+                cv2.putText(
+                    image,
+                    "Shoulder:",
+                    (950, 180),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    1,
+                    (255, 0, 0),
+                    2,
+                )
+
+                cv2.putText(
+                    image,
+                    "Body:",
+                    (950, 230),
+                    cv2.FONT_HERSHEY_COMPLEX,
+                    1,
+                    (255, 0, 0),
+                    2,
                 )
 
                 # Show the final frame
