@@ -5,3 +5,6 @@ __pycache__
 tt.py
 a.py
 myvenv
+build
+dist
+.env
