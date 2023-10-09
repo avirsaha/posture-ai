@@ -7,7 +7,8 @@ pyinstaller ^
  --add-data "..\..\imgs;.\assets" ^
  --specpath ".\build\build_config" ^
  --splash "..\..\imgs\SITFIX.png" ^
- --noconsole ^
+: --noconsole ^
 : --add-binary "..\..\lib;.\lib" ^
- --icon "..\..\imgs\sitfixlogo.png" ^
+--hidden-import=pyi_splash ^
+ --icon "..\..\imgs\sitfixlogo.ico" ^
  src/app.py
