@@ -22,7 +22,7 @@ import math
 import numpy as np
 import logging
 
-__author__: str = "Maithil Saha"
+__author__: str = "Aviraj Saha"
 __date__: str = "2023-09-28"
 __purpose__: str = "Posture analysis using coordinates of body parts."
 __metadata__: tuple[str, ...] = None
