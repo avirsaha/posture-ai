@@ -33,6 +33,7 @@ from tkinter import messagebox
 # Lazy Imports
 open_new_tab = lazy_function("webbrowser", "open_new_tab")
 logging = lazy_module("logging")
+json = lazy_module("json")
 
 
 # Utility functions for GUI.
@@ -58,6 +59,12 @@ def launch_stat() -> None:
     result = messagebox.askyesno("Launching Stat", "Do you want to start monitoring...")
     if result:
         pass
+
+
+def load_urls_from_config(file_path):
+    with open(file_path, "r") as config_file:
+        urls = json.load(config_file)
+    return urls
 
 
 if __name__ == "__main__":

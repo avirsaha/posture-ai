@@ -48,11 +48,10 @@ logging = lazy_module("logging")
 # open_url = lazy_function("gui_util", "open_url")
 # launch_visual = lazy_function("gui_util", "launch_visual")
 # launch_stat = lazy_function("gui_util", "launch_stat")
+load_urls_from_config = lazy_function("gui_util", "load_urls_from_config")
 
 
 # Hover effect
-
-
 # Color update
 def on_hover_color(event, button, bg_color, fg_color) -> None:
     """Changes button color on hover."""
@@ -72,6 +71,16 @@ def get_root() -> tk.Tk:
     Returns:
         tk.Tk: Fully build root window of the app.
     """
+
+    # Load URLs from the configuration file
+    urls = load_urls_from_config("urls.json")
+
+    # Access URLs
+    readme_url = urls.get("readme")
+    python_docs_url = urls.get("python_docs")
+    opencv_docs_url = urls.get("opencv_docs")
+    mediapipe_readme_url = urls.get("mediapipe_readme")
+
     # Setting up the main window.
     root: tk.Tk = tk.Tk()
     root.title("Sitfix-ai")
@@ -170,31 +179,21 @@ def get_root() -> tk.Tk:
         root, text="learn more.", fg="blue", cursor="hand2"
     )
     link_readme.place(x=540, y=401)
-    link_readme.bind(
-        "<Button-1>",
-        partial(open_url, url="https://github.com/avirsaha/sitfix-ai#readme"),
-    )
+    link_readme.bind("<Button-1>", partial(open_url, url=readme_url))
 
     link_python: tk.Label = tk.Label(root, text="Python", fg="black", cursor="hand2")
     link_python.place(x=240, y=130)
-    link_python.bind(
-        "<Button-1>", partial(open_url, url="https://docs.python.org/3.11/")
-    )
+    link_python.bind("<Button-1>", partial(open_url, url=python_docs_url))
 
     link_opencv: tk.Label = tk.Label(root, text="OpenCV", fg="black", cursor="hand2")
     link_opencv.place(x=125, y=160)
-    link_opencv.bind(
-        "<Button-1>", partial(open_url, url="https://docs.opencv.org/4.x/index.html")
-    )
+    link_opencv.bind("<Button-1>", partial(open_url, url=opencv_docs_url))
 
     link_mediapipe: tk.Label = tk.Label(
         root, text="Mediapipe", fg="black", cursor="hand2"
     )
     link_mediapipe.place(x=50, y=160)
-    link_mediapipe.bind(
-        "<Button-1>",
-        partial(open_url, url="https://github.com/google/mediapipe#readme"),
-    )
+    link_mediapipe.bind("<Button-1>", partial(open_url, url=mediapipe_readme_url))
 
     return root
 
