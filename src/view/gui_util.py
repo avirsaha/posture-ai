@@ -16,34 +16,72 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-This module contains utilitis for view module for the MCV Design pattern followed by the project.
-Do not run this as a script.
+This module contains utilities for the `view` module following the MVC (Model-View-Controller) design pattern used in the project.
 
-:Metadata::
-:author: Aviraj Saha
-:date: 2023-10-08 | YYYY-MM-DD
-:purpose: Utility for GUI.
+### Note:
+ Do not run this module as a script.
+
+## Metadata
+- `Author:` Aviraj Saha
+- `Date:` 2023-10-08 (YYYY-MM-DD)
+- `Purpose:` Utility functions for the Graphical User Interface (GUI) component of the project.
 """
-
 
 # Imports
 from lazy_import import lazy_function, lazy_module
 from tkinter import messagebox
-
+from webbrowser import open_new_tab
 # Lazy Imports
-open_new_tab = lazy_function("webbrowser", "open_new_tab")
+# open_new_tab = lazy_function("webbrowser", "open_new_tab")
 logging = lazy_module("logging")
 json = lazy_module("json")
 
 
 # Utility functions for GUI.
 def search_for_updates() -> None:
-    """Handles the search for updates button click event."""
+    """
+    Handles the event when the "Search for Updates" button is clicked. It displays an informational message box indicating that the application is checking for updates.
+
+    ### Parameters
+    This function takes no parameters.
+
+    ### Returns
+    This function does not return any value (`None`).
+
+    ### Side Effects
+    Displays an informational message box with the message "Checking for updates..."
+
+    ### Example
+    ```python
+    search_for_updates()
+"""
     messagebox.showinfo("Search for Updates", "Checking for updates...")
 
 
-def open_url(event, url) -> None:
-    """Opens a URL in the default web browser."""
+def open_url(event, url: str) -> None:
+    """
+    Opens a URL in the default web browser when triggered by an event, such as a button click.
+
+    ### Parameters
+    - `event`: The event object triggering the function (e.g., a button click event).
+    - `url` (str): The URL to be opened in the default web browser.
+
+    ### Returns
+    This function does not return any value (`None`).
+
+    ### Dependencies
+    - `open_new_tab(url)`: This function is part of the `webbrowser` module and is used to open the specified URL in a new browser tab.
+
+    ### Example
+    ```python
+    from webbrowser import open_new_tab
+
+    # ...
+
+    url = "https://example.com"
+    open_url(event, url)
+
+    """
     open_new_tab(url)
 
 
@@ -61,10 +99,30 @@ def launch_stat() -> None:
         pass
 
 
-def load_urls_from_config(file_path):
+def load_urls_from_config(file_path: str) -> dict[str: str]:
+    """
+This function loads URLs from a JSON configuration file and returns them as a dictionary.
+
+### Parameters
+- `file_path: str`:- The file path to the configuration file containing URLs.
+
+### Returns
+- `urls: dict`:- A dictionary containing key-value pairs of URL names and their corresponding addresses.
+
+### Raises
+- `FileNotFoundError`: If the specified configuration file is not found.
+- `json.JSONDecodeError`: If the configuration file is not a valid JSON format.
+
+### Example
+```python
+file_path = "config.json"
+urls = load_urls_from_config(file_path)
+print(urls)
+
+    """
     with open(file_path, "r") as config_file:
         urls = json.load(config_file)
-    return urls
+        return urls
 
 
 if __name__ == "__main__":

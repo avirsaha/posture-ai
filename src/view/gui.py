@@ -16,31 +16,42 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-This module acts as the view module for the MCV Design pattern followed by the project.
-Do not run this as a script.
+# View Module for MVC Design Pattern
 
-:syntax::
+This module serves as the `view` component in the MVC (Model-View-Controller) design pattern implemented in the project.
+
+### Note: 
+Do not execute this module as a script.
+
+## Syntax
+
+```
 root = gui.get_root()
 
 # Other integrations
 
 # Start the event loop
 root.mainloop()
+```
 
-:Metadata::
-:author: Aviraj Saha
-:date: 2023-10-08 | YYYY-MM-DD
-:purpose: View module of the project.
+- `root = gui.get_root()`: Obtain the root GUI window.
+- Other integrations can be added as needed.
+- `root.mainloop()`: Start the event loop for the GUI.
+
+## Metadata
+- `Author:` Aviraj Saha
+- `Date:` 2023-10-08 (YYYY-MM-DD)
+- `Purpose:` View module responsible for the presentation layer of the project.
 """
 
 
 # imports
 import tkinter as tk
-from tkinter import messagebox
 from PIL import Image, ImageTk
 from functools import partial
 from lazy_import import lazy_module, lazy_function
-from gui_util import open_url, launch_stat, launch_visual, search_for_updates
+from .gui_util import open_url, launch_stat, launch_visual, search_for_updates, load_urls_from_config
+from typing import TypeAlias
 
 # lazy Imports
 logging = lazy_module("logging")
@@ -48,8 +59,10 @@ logging = lazy_module("logging")
 # open_url = lazy_function("gui_util", "open_url")
 # launch_visual = lazy_function("gui_util", "launch_visual")
 # launch_stat = lazy_function("gui_util", "launch_stat")
-load_urls_from_config = lazy_function("gui_util", "load_urls_from_config")
+# load_urls_from_config = lazy_function("./gui_util.py", "load_urls_from_config")
 
+# Globals
+window = tk.Tk # Type alias.
 
 # Hover effect
 # Color update
@@ -61,25 +74,26 @@ def on_hover_color(event, button, bg_color, fg_color) -> None:
 # Start root window.
 def get_root() -> tk.Tk:
     """
-    This function returns fully prepared root window.
+    This function prepares and returns the fully configured root window for the application.
 
-    :syntax::
-    start the event loop by:
-    root = gui.start_app()
+    ### Example
+    To start the event loop, use the following syntax:
+
+    ```python
+    root = get_root()
+    # Other integrations
     root.mainloop()
 
-    Returns:
-        tk.Tk: Fully build root window of the app.
     """
 
     # Load URLs from the configuration file
-    urls = load_urls_from_config("urls.json")
+    urls = load_urls_from_config(r"./src/view/data/urls.json")
 
     # Access URLs
-    readme_url = urls.get("readme")
-    python_docs_url = urls.get("python_docs")
-    opencv_docs_url = urls.get("opencv_docs")
-    mediapipe_readme_url = urls.get("mediapipe_readme")
+    readme_url: str = urls.get("readme")
+    python_docs_url: str = urls.get("python_docs")
+    opencv_docs_url: str = urls.get("opencv_docs")
+    mediapipe_readme_url: str = urls.get("mediapipe_readme")
 
     # Setting up the main window.
     root: tk.Tk = tk.Tk()
