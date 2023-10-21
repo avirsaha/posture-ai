@@ -21,11 +21,15 @@ This is an utility module for the main project which include functions to judge 
 import math
 import numpy as np
 import logging
-
+import json
 __author__: str = "Aviraj Saha"
 __date__: str = "2023-09-28"
 __purpose__: str = "Posture analysis using coordinates of body parts."
 __metadata__: tuple[str, ...] = None
+
+# Reading biometrics data from json file
+with open('user_data/biometrics.json', 'r', encoding='utf-8') as biometrics_file:
+    biometrics_data = json.loads(biometrics_file.read())
 
 
 # Configure the logging module
@@ -129,9 +133,12 @@ def isPosture_good(
     shoulder_to_nose_distance = calculate_distance(nose, left_shoulder)
 
     # Definng conditions:
-    condition1 = 0.45 > shoulder_distance > 0.35  # Adjustable threshold
-    condition2 = shoulder_tilt >= 178  # Adjustable threshold
-    condition3 = shoulder_to_nose_distance > 0.35  # Adjustable threshold
+    # condition1 = 0.45 > shoulder_distance > 0.35  # Adjustable threshold
+    condition1 = float(biometrics_data["head"]) + 0.10 > shoulder_distance > float(biometrics_data['head']) - 0.10  # Adjustable threshold
+    # condition2 = shoulder_tilt >= 178  # Adjustable threshold
+    condition2 = shoulder_tilt >= float(biometrics_data['shoulder']) - 2  # Adjustable threshold
+    # condition3 = shoulder_to_nose_distance > 0.35  # Adjustable threshold
+    condition3 = shoulder_to_nose_distance > float(biometrics_data['body']) - 0.5  # Adjustable threshold
     # Taking intersection of all conditions
     is_good_posture: bool = condition1 and condition2 and condition3
 
