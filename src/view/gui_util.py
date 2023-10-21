@@ -89,7 +89,7 @@ def search_for_updates(root, theme) -> None:
     background_label.place(relwidth=1, relheight=1)
 
     for i in range(5):
-        tk.Label(updates_window, text=f"Classic Label {i}").place(x=50, y=130 + 50 * i)
+        tk.Label(updates_window, text=f"Version Details {i}").place(x=50, y=130 + 50 * i)
 
 
 def open_url(event, url: str) -> None:

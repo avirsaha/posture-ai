@@ -50,7 +50,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from functools import partial
 from lazy_import import lazy_module, lazy_function
-from gui_util import (
+from .gui_util import (
     open_url,
     launch_stat,
     launch_visual,
@@ -104,7 +104,6 @@ def get_root() -> tk.Tk:
     root.mainloop()
 
     """
-
     # Load URLs from the configuration file
     urls = load_urls_from_config(r"./src/view/data/urls.json")
 
@@ -248,7 +247,7 @@ def get_root() -> tk.Tk:
     clicked = tk.StringVar()
 
     # initial menu text
-    clicked.set("light")
+    clicked.set(theme)
 
     # Dropdowns
     drop = tk.OptionMenu(
