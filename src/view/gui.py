@@ -50,8 +50,15 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from functools import partial
 from lazy_import import lazy_module, lazy_function
-from .gui_util import open_url, launch_stat, launch_visual, search_for_updates, load_urls_from_config
-from typing import TypeAlias
+from gui_util import (
+    open_url,
+    launch_stat,
+    launch_visual,
+    search_for_updates,
+    load_urls_from_config,
+    change_theme,
+)
+import json
 
 # lazy Imports
 logging = lazy_module("logging")
@@ -62,7 +69,19 @@ logging = lazy_module("logging")
 # load_urls_from_config = lazy_function("./gui_util.py", "load_urls_from_config")
 
 # Globals
-window = tk.Tk # Type alias.
+window = tk.Tk  # Type alias.
+with open(
+    "src/view/config/display_settings.json", "r", encoding="utf-8"
+) as display_config_file:
+    display_config = json.loads(display_config_file.read())
+theme: str = display_config["theme"]
+
+# Theme modes drop down.
+themes = [
+    "light",
+    "dark",
+]
+
 
 # Hover effect
 # Color update
@@ -103,7 +122,12 @@ def get_root() -> tk.Tk:
     root.iconbitmap("imgs/sitfixlogo.ico")
 
     # Setting up background window.
-    background_image: Image = Image.open("imgs/Sitfix-ai-home3.png")
+    if theme == "light":
+        background_image: Image = Image.open("imgs/1.png")
+    elif theme == "dark":
+        background_image: Image = Image.open("imgs/2.png")
+    else:
+        raise Exception("JSON config file corrupted. Theme")
     background_photo: ImageTk.PhotoImage = ImageTk.PhotoImage(background_image)
     background_label: tk.Label = tk.Label(root, image=background_photo)
     background_label.image: ImageTk.PhotoImage = background_photo
@@ -113,10 +137,11 @@ def get_root() -> tk.Tk:
     update_button: tk.Button = tk.Button(
         root,
         text="Search for Updates",
-        command=search_for_updates,
+        # command=search_for_updates,
         width=15,
         bg="yellow",
         fg="black",
+        command=partial(search_for_updates, root=root, theme=theme),
     )
     update_button.place(x=460, y=130)
     update_button.bind(
@@ -189,26 +214,50 @@ def get_root() -> tk.Tk:
     )
 
     # Links
+    bg_color = "white"
+    fg_color = "black"
+    if theme == "dark":
+        bg_color = "gray14"
+        fg_color = "white"
+
     link_readme: tk.Label = tk.Label(
-        root, text="learn more.", fg="blue", cursor="hand2"
+        root, text="learn more.", fg=fg_color, cursor="hand2", bg=bg_color
     )
     link_readme.place(x=540, y=401)
     link_readme.bind("<Button-1>", partial(open_url, url=readme_url))
 
-    link_python: tk.Label = tk.Label(root, text="Python", fg="black", cursor="hand2")
+    link_python: tk.Label = tk.Label(
+        root, text="Python", fg=fg_color, cursor="hand2", bg=bg_color
+    )
     link_python.place(x=240, y=130)
     link_python.bind("<Button-1>", partial(open_url, url=python_docs_url))
 
-    link_opencv: tk.Label = tk.Label(root, text="OpenCV", fg="black", cursor="hand2")
+    link_opencv: tk.Label = tk.Label(
+        root, text="OpenCV", fg=fg_color, cursor="hand2", bg=bg_color
+    )
     link_opencv.place(x=125, y=160)
     link_opencv.bind("<Button-1>", partial(open_url, url=opencv_docs_url))
 
     link_mediapipe: tk.Label = tk.Label(
-        root, text="Mediapipe", fg="black", cursor="hand2"
+        root, text="Mediapipe", fg=fg_color, cursor="hand2", bg=bg_color
     )
     link_mediapipe.place(x=50, y=160)
     link_mediapipe.bind("<Button-1>", partial(open_url, url=mediapipe_readme_url))
 
+    # datatype of menu text
+    clicked = tk.StringVar()
+
+    # initial menu text
+    clicked.set("light")
+
+    # Dropdowns
+    drop = tk.OptionMenu(
+        root,
+        clicked,
+        *themes,
+        command=partial(change_theme, display_config=display_config),
+    )
+    drop.place(x=520, y=450)
     return root
 
 

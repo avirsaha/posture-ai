@@ -28,9 +28,12 @@ This module contains utilities for the `view` module following the MVC (Model-Vi
 """
 
 # Imports
+import tkinter as tk
 from lazy_import import lazy_function, lazy_module
 from tkinter import messagebox
 from webbrowser import open_new_tab
+from PIL import Image, ImageTk
+
 # Lazy Imports
 # open_new_tab = lazy_function("webbrowser", "open_new_tab")
 logging = lazy_module("logging")
@@ -38,7 +41,21 @@ json = lazy_module("json")
 
 
 # Utility functions for GUI.
-def search_for_updates() -> None:
+
+
+def change_theme(value, display_config):
+    display_config["theme"] = value
+    json_object = json.dumps(display_config, indent=4)
+    with open(
+        "src/view/config/display_settings.json", "w", encoding="utf-8"
+    ) as display_config_file:
+        display_config_file.write(json_object)
+    messagebox.showinfo(
+        "Sitfix-ai Alert!", message="Restart the program to see changes made."
+    )
+
+
+def search_for_updates(root, theme) -> None:
     """
     Handles the event when the "Search for Updates" button is clicked. It displays an informational message box indicating that the application is checking for updates.
 
@@ -53,9 +70,26 @@ def search_for_updates() -> None:
 
     ### Example
     ```python
-    search_for_updates()
-"""
-    messagebox.showinfo("Search for Updates", "Checking for updates...")
+    search_for_updates()"""
+    updates_window = tk.Toplevel(root)
+    updates_window.title("Sitfix-ai Updates")
+    updates_window.geometry("715x535")
+    updates_window.resizable(False, False)
+    updates_window.iconbitmap("imgs/sitfixlogo.ico")
+
+    # Setting up background window.
+    if theme == "light":
+        background_image: Image = Image.open("imgs/3.png")
+    elif theme == "dark":
+        background_image: Image = Image.open("imgs/4.png")
+
+    background_photo: ImageTk.PhotoImage = ImageTk.PhotoImage(background_image)
+    background_label: tk.Label = tk.Label(updates_window, image=background_photo)
+    background_label.image: ImageTk.PhotoImage = background_photo
+    background_label.place(relwidth=1, relheight=1)
+
+    for i in range(5):
+        tk.Label(updates_window, text=f"Classic Label {i}").place(x=50, y=130 + 50 * i)
 
 
 def open_url(event, url: str) -> None:
@@ -99,25 +133,25 @@ def launch_stat() -> None:
         pass
 
 
-def load_urls_from_config(file_path: str) -> dict[str: str]:
+def load_urls_from_config(file_path: str) -> dict[str:str]:
     """
-This function loads URLs from a JSON configuration file and returns them as a dictionary.
+    This function loads URLs from a JSON configuration file and returns them as a dictionary.
 
-### Parameters
-- `file_path: str`:- The file path to the configuration file containing URLs.
+    ### Parameters
+    - `file_path: str`:- The file path to the configuration file containing URLs.
 
-### Returns
-- `urls: dict`:- A dictionary containing key-value pairs of URL names and their corresponding addresses.
+    ### Returns
+    - `urls: dict`:- A dictionary containing key-value pairs of URL names and their corresponding addresses.
 
-### Raises
-- `FileNotFoundError`: If the specified configuration file is not found.
-- `json.JSONDecodeError`: If the configuration file is not a valid JSON format.
+    ### Raises
+    - `FileNotFoundError`: If the specified configuration file is not found.
+    - `json.JSONDecodeError`: If the configuration file is not a valid JSON format.
 
-### Example
-```python
-file_path = "config.json"
-urls = load_urls_from_config(file_path)
-print(urls)
+    ### Example
+    ```python
+    file_path = "config.json"
+    urls = load_urls_from_config(file_path)
+    print(urls)
 
     """
     with open(file_path, "r") as config_file:
