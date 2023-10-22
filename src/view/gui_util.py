@@ -89,7 +89,9 @@ def search_for_updates(root, theme) -> None:
     background_label.place(relwidth=1, relheight=1)
 
     for i in range(5):
-        tk.Label(updates_window, text=f"Version Details {i}").place(x=50, y=130 + 50 * i)
+        tk.Label(updates_window, text=f"Version Details {i}").place(
+            x=50, y=130 + 50 * i
+        )
 
 
 def open_url(event, url: str) -> None:
@@ -126,11 +128,24 @@ def launch_visual() -> None:
         pass
 
 
-def launch_stat() -> None:
+def launch(root, theme) -> None:
     """Handles the launch stat event."""
-    result = messagebox.askyesno("Launching Stat", "Do you want to start monitoring...")
-    if result:
-        pass
+    updates_window = tk.Toplevel(root)
+    updates_window.title("Sitfix-ai Updates")
+    updates_window.geometry("715x535")
+    updates_window.resizable(False, False)
+    updates_window.iconbitmap("imgs/sitfixlogo.ico")
+
+    # Setting up background window.
+    if theme == "light":
+        background_image: Image = Image.open("imgs/11.png")
+    elif theme == "dark":
+        background_image: Image = Image.open("imgs/13.png")
+
+    background_photo: ImageTk.PhotoImage = ImageTk.PhotoImage(background_image)
+    background_label: tk.Label = tk.Label(updates_window, image=background_photo)
+    background_label.image: ImageTk.PhotoImage = background_photo
+    background_label.place(relwidth=1, relheight=1)
 
 
 def load_urls_from_config(file_path: str) -> dict[str:str]:

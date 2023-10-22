@@ -52,7 +52,7 @@ from functools import partial
 from lazy_import import lazy_module, lazy_function
 from .gui_util import (
     open_url,
-    launch_stat,
+    launch,
     launch_visual,
     search_for_updates,
     load_urls_from_config,
@@ -158,7 +158,7 @@ def get_root() -> tk.Tk:
 
     launch_button_visual: tk.Button = tk.Button(
         root,
-        text="Launch Visual",
+        text="Calibrate",
         command=launch_visual,
         width=12,
         bg="black",
@@ -186,8 +186,8 @@ def get_root() -> tk.Tk:
 
     launch_button_stat: tk.Button = tk.Button(
         root,
-        text="Launch Stat",
-        command=launch_stat,
+        text="Launch",
+        command=partial(launch, root, theme),
         width=12,
         bg="Black",
         fg="yellow",
