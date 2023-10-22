@@ -33,6 +33,7 @@ from lazy_import import lazy_function, lazy_module
 from tkinter import messagebox
 from webbrowser import open_new_tab
 from PIL import Image, ImageTk
+import tkinter.font as font
 
 # Lazy Imports
 # open_new_tab = lazy_function("webbrowser", "open_new_tab")
@@ -130,22 +131,28 @@ def launch_visual() -> None:
 
 def launch(root, theme) -> None:
     """Handles the launch stat event."""
-    updates_window = tk.Toplevel(root)
-    updates_window.title("Sitfix-ai Updates")
-    updates_window.geometry("715x535")
-    updates_window.resizable(False, False)
-    updates_window.iconbitmap("imgs/sitfixlogo.ico")
-
+    launch_window = tk.Toplevel(root)
+    launch_window.title("Sitfix-ai Updates")
+    launch_window.geometry("715x535")
+    launch_window.resizable(False, False)
+    launch_window.iconbitmap("imgs/sitfixlogo.ico")
+    fg_color = "black"
+    bg_color = "white"
     # Setting up background window.
     if theme == "light":
         background_image: Image = Image.open("imgs/11.png")
     elif theme == "dark":
         background_image: Image = Image.open("imgs/13.png")
-
+        fg_color = "yellow"
+        bg_color = "gray21"
     background_photo: ImageTk.PhotoImage = ImageTk.PhotoImage(background_image)
-    background_label: tk.Label = tk.Label(updates_window, image=background_photo)
+    background_label: tk.Label = tk.Label(launch_window, image=background_photo)
     background_label.image: ImageTk.PhotoImage = background_photo
     background_label.place(relwidth=1, relheight=1)
+    precent_font = font.Font(family="Helvetica", size=60, weight="bold")
+    tk.Label(
+        launch_window, text="100%", font=precent_font, bg=bg_color, fg=fg_color
+    ).place(x=50, y=250)
 
 
 def load_urls_from_config(file_path: str) -> dict[str:str]:

@@ -70,7 +70,6 @@ import cv2
 import mediapipe as mp
 from typing import Final
 from logging import basicConfig, error, ERROR
-import judge
 import winsound
 
 # Configure logging to show only errors
@@ -170,68 +169,6 @@ def process_frame(
         return None, None
 
 
-def display_posture_status(
-    image: cv2.typing.MatLike, posture_status: bool, *cases: list[tuple[float, bool]]
-) -> None:
-    """
-    Display posture status on the image.
-
-    Args:
-        image (object): Image to display on.
-        posture_status (bool): Whether the posture is good or not.
-        angle (float): Angle related to the posture.
-
-    Author: Aviraj Saha
-    Date: September 30, 2023
-    Purpose: Display posture status on the processed image.
-    Time Complexity: O(1)
-    Space Complexity: O(1)
-    """
-
-    try:
-        # Display posture status as text on the image
-        if not posture_status:
-            winsound.Beep(800, 10)
-            cv2.putText(
-                image,
-                "Poor Posture",
-                (80, 80),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                3,
-                (0, 0, 255),
-                2,
-            )
-
-        else:
-            cv2.putText(
-                image,
-                "Good posture",
-                (80, 80),
-                cv2.FONT_HERSHEY_COMPLEX,
-                3,
-                (255, 0, 0),
-                2,
-            )
-        inc: int = 0
-        for item in cases:
-            inc += 50
-            colors: tuple[int] = (255, 0, 0)
-            if not item[1]:
-                colors = (0, 0, 255)
-            cv2.putText(
-                image,
-                f"{math.floor(item[0])}",
-                (1200, 80 + inc),
-                cv2.FONT_HERSHEY_COMPLEX,
-                1,
-                colors,
-                2,
-            )
-
-    except Exception as e:
-        error(f"Error displaying posture status: {e}")
-
-
 def process_video(pose: mp.solutions.pose.Pose, camera_index: int) -> None:
     """
     Process video frames, detect posture, and visualize it.
@@ -260,58 +197,6 @@ def process_video(pose: mp.solutions.pose.Pose, camera_index: int) -> None:
                 image: cv2.typing.MatLike
                 results: object
                 image, results = process_frame(frame, pose)
-                if results:
-                    if results.pose_landmarks:
-                        left_shoulder: object = results.pose_landmarks.landmark[
-                            mp.solutions.pose.PoseLandmark.LEFT_SHOULDER
-                        ]
-                        right_shoulder: object = results.pose_landmarks.landmark[
-                            mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER
-                        ]
-                        right_hip: object = results.pose_landmarks.landmark[
-                            mp.solutions.pose.PoseLandmark.RIGHT_HIP
-                        ]
-                        left_hip: object = results.pose_landmarks.landmark[
-                            mp.solutions.pose.PoseLandmark.LEFT_HIP
-                        ]
-                        nose: object = results.pose_landmarks.landmark[
-                            mp.solutions.pose.PoseLandmark.NOSE
-                        ]
-                        posture_status: bool
-                        (
-                            posture_status,
-                            shoulder_distance,
-                            shoulder_tilt,
-                            shoulder_to_nose_distance,
-                        ) = judge.isPosture_good(
-                            left_shoulder=(left_shoulder.x, left_shoulder.y),
-                            right_shoulder=(
-                                right_shoulder.x,
-                                right_shoulder.y,
-                            ),
-                            nose=(nose.x, nose.y),
-                        )
-                        # Display the posture status on the image
-
-                        # shoulder_distance = str(float(shoulder_distance) * 100)
-                        # shoulder_tilt = str(180 - float(shoulder_tilt))
-                        # shoulder_to_nose_distance = str(
-                        #     float(shoulder_to_nose_distance) * 100
-                        # )
-                        shoulder_distance[0] *= 100
-                        shoulder_to_nose_distance[0] *= 100
-                        shoulder_tilt[0] = 180 - shoulder_tilt[0]
-                        display_posture_status(
-                            image,
-                            posture_status,
-                            shoulder_distance,
-                            shoulder_tilt,
-                            shoulder_to_nose_distance,
-                        )
-
-                else:
-                    error("No human figure detected")
-
                 # Draw landmarks on the frame
                 mp.solutions.drawing_utils.draw_landmarks(
                     image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS

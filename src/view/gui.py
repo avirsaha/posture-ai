@@ -256,6 +256,8 @@ def get_root() -> tk.Tk:
         *themes,
         command=partial(change_theme, display_config=display_config),
     )
+
+    drop.config(bg=bg_color, fg=fg_color, width=20, activebackground="yellow", padx=0)
     drop.place(x=520, y=450)
     return root
 
